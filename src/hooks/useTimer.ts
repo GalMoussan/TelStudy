@@ -1,5 +1,5 @@
-// Placeholder for useTimer hook
-// Implementation coming in Phase 2
+'use client';
+import { useRef, useState, useEffect, useCallback } from 'react';
 
 interface UseTimerReturn {
   elapsed: number;
@@ -7,9 +7,21 @@ interface UseTimerReturn {
 }
 
 export function useTimer(): UseTimerReturn {
-  // Placeholder
-  return {
-    elapsed: 0,
-    reset: () => {},
-  };
+  const startRef = useRef<number>(Date.now());
+  const [elapsed, setElapsed] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setElapsed(Date.now() - startRef.current);
+    }, 100); // 100ms interval for smooth display, accurate time from Date.now()
+
+    return () => clearInterval(id);
+  }, []);
+
+  const reset = useCallback(() => {
+    startRef.current = Date.now();
+    setElapsed(0);
+  }, []);
+
+  return { elapsed, reset };
 }
