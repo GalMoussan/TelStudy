@@ -16,6 +16,7 @@ export interface QuestionSetListItem {
   name: string;
   question_count: number;
   created_at: string;
+  file_path: string;
 }
 
 export interface CreateQuestionSetResponse {
