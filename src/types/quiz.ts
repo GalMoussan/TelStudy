@@ -9,21 +9,23 @@ export interface AnswerRecord {
 }
 
 export interface QuizSessionState {
-  sessionId: string;
-  questions: Question[];
   currentIndex: number;
   selectedAnswer: number | null;
   showExplanation: boolean;
-  explanationData: ExplanationData | null;
   isSubmitting: boolean;
+  isComplete: boolean;
   answers: AnswerRecord[];
-  sessionStartTime: number;
-  questionStartTime: number;
+  // Optional context set at session start
+  sessionId?: string;
+  questions?: Question[];
+  explanationData?: ExplanationData | null;
+  sessionStartTime?: number;
+  questionStartTime?: number;
 }
 
 export interface ExplanationData {
-  correct: boolean;
-  correctAnswerIndex: number;
+  isCorrect: boolean;
+  correctIndex: number;
   explanation: string;
 }
 

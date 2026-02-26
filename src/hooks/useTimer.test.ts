@@ -3,8 +3,8 @@ import { renderHook, act } from '@testing-library/react';
 import { useTimer } from './useTimer';
 
 describe('T010 — Quiz Timers: useTimer', () => {
-  beforeEach(() => vi.useFakeTimers());
-  afterEach(() => vi.useRealTimers());
+  beforeEach(() => { vi.useFakeTimers(); });
+  afterEach(() => { vi.useRealTimers(); });
 
   it('starts with elapsed = 0', () => {
     // Acceptance: "Timer starts at 0 on mount"
