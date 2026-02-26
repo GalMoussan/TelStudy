@@ -1,7 +1,7 @@
 export default function Home() {
   return (
-    <main>
-      <h1>TelStudy</h1>
+    <main className="flex min-h-screen flex-col items-center justify-center">
+      <h1 className="text-2xl font-mono tracking-tight">TelStudy</h1>
     </main>
   );
 }
