@@ -1,8 +1,10 @@
 'use client';
-import { useReducer, useEffect } from 'react';
+import { useReducer, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { quizReducer, createInitialState } from '@/hooks/useQuizReducer';
+import { useQuizTimers } from '@/hooks/useQuizTimers';
 import { QuizProgress } from './QuizProgress';
+import { QuizTimer } from './QuizTimer';
 import { QuizCard } from './QuizCard';
 import { Button } from '@/components/ui';
 import type { Question } from '../../../shared/types/question';
@@ -16,6 +18,8 @@ interface QuizClientProps {
 export function QuizClient({ sessionId, questions, setId: _setId }: QuizClientProps) {
   const router = useRouter();
   const [state, dispatch] = useReducer(quizReducer, createInitialState(sessionId, questions));
+  const { cumulativeElapsed, perQuestionElapsed, captureQuestionTime } = useQuizTimers();
+  const capturedTimeRef = useRef<number>(0);
 
   const currentQuestion = state.questions?.[state.currentIndex];
   const totalQuestions = state.questions?.length ?? 0;
@@ -31,8 +35,9 @@ export function QuizClient({ sessionId, questions, setId: _setId }: QuizClientPr
   if (!currentQuestion || isComplete) return null;
 
   function handleSelectOption(index: number) {
+    capturedTimeRef.current = captureQuestionTime();
     dispatch({ type: 'SELECT_ANSWER', index });
-    // TODO: T011 wires submission here
+    // TODO: T011 wires submission here - will use capturedTimeRef.current
   }
 
   function handleNext() {
@@ -50,7 +55,8 @@ export function QuizClient({ sessionId, questions, setId: _setId }: QuizClientPr
         total={totalQuestions}
       />
 
-      {/* T010 will add <QuizTimer> here */}
+      {/* T010: Timer display */}
+      <QuizTimer cumulativeMs={cumulativeElapsed} perQuestionMs={perQuestionElapsed} />
 
       <QuizCard
         question={currentQuestion}
