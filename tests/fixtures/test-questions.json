@@ -1,0 +1,37 @@
+[
+  {
+    "question_text": "What is the capital of France?",
+    "options": ["Berlin", "Madrid", "Paris", "Rome"],
+    "correct_answer_index": 2,
+    "explanation": "Paris has been the capital of France since the 10th century."
+  },
+  {
+    "question_text": "Which data structure uses LIFO ordering?",
+    "options": ["Queue", "Stack", "Linked List", "Tree"],
+    "correct_answer_index": 1,
+    "explanation": "A stack uses Last-In-First-Out (LIFO) ordering."
+  },
+  {
+    "question_text": "What does HTTP stand for?",
+    "options": [
+      "HyperText Transfer Protocol",
+      "High Transfer Text Protocol",
+      "HyperText Transmission Protocol",
+      "Hybrid Text Transfer Protocol"
+    ],
+    "correct_answer_index": 0,
+    "explanation": "HTTP stands for HyperText Transfer Protocol, the foundation of data communication on the web."
+  },
+  {
+    "question_text": "Which CSS property controls element opacity?",
+    "options": ["visibility", "display", "transparency", "opacity"],
+    "correct_answer_index": 3,
+    "explanation": "The 'opacity' property sets the transparency level of an element (0 = fully transparent, 1 = fully opaque)."
+  },
+  {
+    "question_text": "What is the output of 2 ** 10 in JavaScript?",
+    "options": ["20", "100", "1024", "2048"],
+    "correct_answer_index": 2,
+    "explanation": "The ** operator is the exponentiation operator. 2 to the power of 10 equals 1024."
+  }
+]

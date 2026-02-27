@@ -1,18 +1,54 @@
 import { describe, it, expect } from 'vitest';
-import { quizReducer } from './useQuizReducer';
+import { quizReducer, createInitialState } from './useQuizReducer';
 import type { QuizSessionState, QuizAction } from '@/types/quiz';
+import type { Question } from '../../shared/types/question';
+
+const SAMPLE_QUESTIONS: Question[] = [
+  { question_text: 'Q1?', options: ['A', 'B', 'C', 'D'], correct_answer_index: 0, explanation: 'E1' },
+  { question_text: 'Q2?', options: ['A', 'B', 'C', 'D'], correct_answer_index: 1, explanation: 'E2' },
+];
 
 function makeState(overrides: Partial<QuizSessionState> = {}): QuizSessionState {
   return {
+    sessionId: 'test-session',
+    questions: SAMPLE_QUESTIONS,
     currentIndex: 0,
     selectedAnswer: null,
     showExplanation: false,
+    explanationData: null,
     isSubmitting: false,
     isComplete: false,
     answers: [],
+    sessionStartTime: Date.now(),
+    questionStartTime: Date.now(),
     ...overrides,
   };
 }
+
+describe('T023 — Unit Tests: createInitialState', () => {
+  it('returns correct initial state shape', () => {
+    const state = createInitialState('abc-123', SAMPLE_QUESTIONS);
+    expect(state.sessionId).toBe('abc-123');
+    expect(state.questions).toBe(SAMPLE_QUESTIONS);
+    expect(state.currentIndex).toBe(0);
+    expect(state.selectedAnswer).toBeNull();
+    expect(state.showExplanation).toBe(false);
+    expect(state.explanationData).toBeNull();
+    expect(state.isSubmitting).toBe(false);
+    expect(state.isComplete).toBe(false);
+    expect(state.answers).toEqual([]);
+  });
+
+  it('sets sessionStartTime and questionStartTime to current time', () => {
+    const before = Date.now();
+    const state = createInitialState('session-1', SAMPLE_QUESTIONS);
+    const after = Date.now();
+    expect(state.sessionStartTime).toBeGreaterThanOrEqual(before);
+    expect(state.sessionStartTime).toBeLessThanOrEqual(after);
+    expect(state.questionStartTime).toBeGreaterThanOrEqual(before);
+    expect(state.questionStartTime).toBeLessThanOrEqual(after);
+  });
+});
 
 describe('T009 — Quiz Engine: quizReducer', () => {
   describe('SELECT_ANSWER', () => {
@@ -68,6 +104,12 @@ describe('T009 — Quiz Engine: quizReducer', () => {
       expect(next.currentIndex).toBe(1);
       expect(next.selectedAnswer).toBeNull();
       expect(next.showExplanation).toBe(false);
+    });
+
+    it('is a no-op when showExplanation is false', () => {
+      const state = makeState({ currentIndex: 0, showExplanation: false });
+      const next = quizReducer(state, { type: 'NEXT_QUESTION' });
+      expect(next).toBe(state);
     });
   });
 

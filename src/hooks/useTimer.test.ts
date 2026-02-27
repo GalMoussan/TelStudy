@@ -4,7 +4,7 @@ import { useTimer } from './useTimer';
 
 describe('T010 — Quiz Timers: useTimer', () => {
   beforeEach(() => { vi.useFakeTimers(); });
-  afterEach(() => { vi.useRealTimers(); });
+  afterEach(() => { vi.useRealTimers(); vi.restoreAllMocks(); });
 
   it('starts with elapsed = 0', () => {
     // Acceptance: "Timer starts at 0 on mount"

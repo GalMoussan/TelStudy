@@ -1,17 +1,14 @@
 'use client';
 import { useQuestionSets } from '@/hooks/useQuestionSets';
 import { QuestionSetCard } from './QuestionSetCard';
-import { Spinner, EmptyState } from '@/components/ui';
+import { QuestionSetListSkeleton } from './QuestionSetListSkeleton';
+import { EmptyState } from '@/components/ui';
 
 export function QuestionSetList() {
   const { data: sets, isLoading, error } = useQuestionSets();
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center py-16">
-        <Spinner size="md" />
-      </div>
-    );
+    return <QuestionSetListSkeleton />;
   }
 
   if (error) {

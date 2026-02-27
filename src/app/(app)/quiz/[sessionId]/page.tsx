@@ -1,7 +1,14 @@
+import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { QuizClient } from '@/components/quiz/QuizClient';
+import { AppErrorBoundary } from '@/components/layout/AppErrorBoundary';
 import { QuestionSetFileSchema } from '../../../../../shared/types/question';
+
+export const metadata: Metadata = {
+  title: 'Quiz — TelStudy',
+  description: 'Answer timed quiz questions and receive instant feedback on each answer.',
+};
 
 interface QuizPageProps {
   params: Promise<{ sessionId: string }>;
@@ -54,7 +61,9 @@ export default async function QuizPage({ params }: QuizPageProps) {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <QuizClient sessionId={sessionId} questions={questions} setId={session.set_id} />
+      <AppErrorBoundary>
+        <QuizClient sessionId={sessionId} questions={questions} setId={session.set_id} />
+      </AppErrorBoundary>
     </div>
   );
 }
