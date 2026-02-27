@@ -5,6 +5,8 @@ import { ResultsClient } from '@/components/analytics/ResultsClient';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { calculateGrade, classifyQuestion } from '@/lib/grade';
 import type { DataPoint, SessionAnalytics, AnalyticsSummary } from '@/types/analytics';
+import type { AnswerDetail } from '@/components/analytics/ResultsSummaryTable';
+import type { Question } from '../../../../../shared/types/question';
 
 export const metadata: Metadata = {
   title: 'Results — TelStudy',
@@ -38,10 +40,10 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
   if (!session || session.user_id !== user.id) redirect('/dashboard?error=not-found');
   if (!session.completed_at) redirect(`/quiz/${sessionId}`);
 
-  // Fetch all answers for this session
+  // Fetch all answers for this session (including selected/correct indices for accordion)
   const { data: answers } = await supabase
     .from('quiz_answers')
-    .select('question_index, is_correct, time_taken_ms')
+    .select('question_index, is_correct, time_taken_ms, selected_index, correct_answer_index')
     .eq('session_id', sessionId)
     .order('question_index', { ascending: true });
 
@@ -84,10 +86,32 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
     summary,
   };
 
+  // Load question JSON from storage for accordion display
+  let questions: Question[] = [];
+  try {
+    const { data: fileData } = await supabase.storage
+      .from('question-sets')
+      .download(`${user.id}/${session.set_id}.json`);
+    if (fileData) {
+      const text = await fileData.text();
+      questions = JSON.parse(text) as Question[];
+    }
+  } catch {
+    // Non-fatal — accordion will show without question text
+  }
+
+  const answerDetails: AnswerDetail[] = rows.map((r) => ({
+    questionIndex: r.question_index,
+    questionText: questions[r.question_index]?.question_text ?? '',
+    options: questions[r.question_index]?.options ?? [],
+    selectedIndex: r.selected_index,
+    correctAnswerIndex: r.correct_answer_index,
+  }));
+
   return (
     <div className="mx-auto max-w-2xl">
       <PageHeader title={`Results — ${session.set_name}`} />
-      <ResultsClient analytics={analytics} setId={session.set_id} />
+      <ResultsClient analytics={analytics} setId={session.set_id} answerDetails={answerDetails} />
     </div>
   );
 }

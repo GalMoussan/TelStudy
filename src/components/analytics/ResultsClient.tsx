@@ -7,13 +7,15 @@ import { QuadrantLegend } from './QuadrantLegend';
 import { ResultsSummaryTable } from './ResultsSummaryTable';
 import { Button } from '@/components/ui';
 import type { SessionAnalytics } from '@/types/analytics';
+import type { AnswerDetail } from './ResultsSummaryTable';
 
 interface ResultsClientProps {
   analytics: SessionAnalytics;
   setId: string;
+  answerDetails?: AnswerDetail[];
 }
 
-export function ResultsClient({ analytics, setId }: ResultsClientProps) {
+export function ResultsClient({ analytics, setId, answerDetails }: ResultsClientProps) {
   const { grade, correctCount, totalCount, avgTimeMs, dataPoints, summary } = analytics;
 
   async function handleRetry() {
@@ -52,7 +54,7 @@ export function ResultsClient({ analytics, setId }: ResultsClientProps) {
       <QuadrantLegend summary={summary} />
 
       {/* Summary table */}
-      <ResultsSummaryTable dataPoints={dataPoints} />
+      <ResultsSummaryTable dataPoints={dataPoints} answerDetails={answerDetails} />
 
       {/* Navigation */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--border)] pt-4">

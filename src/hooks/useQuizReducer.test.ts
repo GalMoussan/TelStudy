@@ -19,6 +19,8 @@ function makeState(overrides: Partial<QuizSessionState> = {}): QuizSessionState 
     isSubmitting: false,
     isComplete: false,
     answers: [],
+    wrongAttempts: [],
+    reviewIndex: null,
     sessionStartTime: Date.now(),
     questionStartTime: Date.now(),
     ...overrides,

@@ -1,5 +1,5 @@
 'use client';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button, ErrorBanner } from '@/components/ui';
 import { validateQuestionFile } from '@/lib/validators/question-schema';
 import { useQueryClient } from '@tanstack/react-query';
@@ -16,6 +16,16 @@ export function UploadModal({ isOpen, onClose }: UploadModalProps) {
   const [errors, setErrors] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  // Reset all state whenever the modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setName('');
+      setFile(null);
+      setErrors([]);
+      if (fileRef.current) fileRef.current.value = '';
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -111,6 +121,19 @@ export function UploadModal({ isOpen, onClose }: UploadModalProps) {
             />
             {file && errors.length === 0 && (
               <p className="mt-1 text-xs text-[var(--muted)]">{file.name} — valid</p>
+            )}
+            {file && errors.length > 0 && (
+              <button
+                type="button"
+                onClick={() => {
+                  setFile(null);
+                  setErrors([]);
+                  if (fileRef.current) fileRef.current.value = '';
+                }}
+                className="mt-1 text-xs text-[var(--muted)] hover:text-[var(--text)] underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
+              >
+                Clear file and try another
+              </button>
             )}
           </div>
 

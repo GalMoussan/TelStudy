@@ -13,6 +13,8 @@ export function createInitialState(sessionId: string, questions: Question[]): Qu
     isSubmitting: false,
     isComplete: false,
     answers: [],
+    wrongAttempts: [],
+    reviewIndex: null,
     sessionStartTime: Date.now(),
     questionStartTime: Date.now(),
   };
@@ -26,18 +28,26 @@ export function quizReducer(state: QuizSessionState, action: QuizAction): QuizSe
       return { ...state, selectedAnswer: action.index };
     }
 
+    case 'MARK_WRONG_ATTEMPT': {
+      if (state.showExplanation || state.isSubmitting) return state;
+      // No-op if already tracked
+      if (state.wrongAttempts.includes(action.index)) return state;
+      return { ...state, wrongAttempts: [...state.wrongAttempts, action.index] };
+    }
+
     case 'SET_SUBMITTING': {
       return { ...state, isSubmitting: action.value };
     }
 
     case 'SHOW_EXPLANATION': {
-      // ExplanationData uses: isCorrect, correctIndex, explanation
       const answerRecord: AnswerRecord = {
         questionIndex: state.currentIndex,
-        selectedIndex: state.selectedAnswer ?? -1,
+        // Use explicitly passed recordedIndex if provided, else fall back to selectedAnswer
+        selectedIndex: action.recordedIndex ?? state.selectedAnswer ?? -1,
         correctAnswerIndex: action.data.correctIndex,
         isCorrect: action.data.isCorrect,
         timeTakenMs: action.timeTakenMs,
+        explanation: action.data.explanation,
       };
 
       return {
@@ -58,12 +68,32 @@ export function quizReducer(state: QuizSessionState, action: QuizAction): QuizSe
         selectedAnswer: null,
         showExplanation: false,
         explanationData: null,
+        wrongAttempts: [],
+        reviewIndex: null,
         questionStartTime: Date.now(),
       };
     }
 
     case 'COMPLETE': {
       return { ...state, isComplete: true };
+    }
+
+    case 'ENTER_REVIEW': {
+      return { ...state, reviewIndex: action.index };
+    }
+
+    case 'EXIT_REVIEW': {
+      return { ...state, reviewIndex: null };
+    }
+
+    case 'PREV_REVIEW': {
+      if (state.reviewIndex === null || state.reviewIndex === 0) return state;
+      return { ...state, reviewIndex: state.reviewIndex - 1 };
+    }
+
+    case 'NEXT_REVIEW': {
+      if (state.reviewIndex === null || state.reviewIndex >= state.currentIndex - 1) return state;
+      return { ...state, reviewIndex: state.reviewIndex + 1 };
     }
 
     default:
