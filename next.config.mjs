@@ -38,7 +38,7 @@ const nextConfig = {
             value: [
               "default-src 'self'",
               `connect-src 'self' https://${supabaseHost} wss://${supabaseHost}`,
-              "script-src 'self'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob:",
               "font-src 'self'",
